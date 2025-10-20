@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "formidable": "^3.5.4",
     "nodemailer": "^7.0.9"
   },
   "name": "gorgeo-site",

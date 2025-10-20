@@ -1,4 +1,4 @@
-import { IncomingForm } from 'formidable';
+import formidable from 'formidable';
 import fs from 'fs';
 import nodemailer from 'nodemailer';
 
@@ -20,12 +20,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const form = new IncomingForm({
-      uploadDir: "/tmp",
-      keepExtensions: true,
-      allowEmptyFiles: true,
-      minFileSize: 0
-    });
+    const form = new formidable.IncomingForm();
+    form.uploadDir = "/tmp"; // Node.js 支持的临时路径（Vercel 本地可用）
+    form.keepExtensions = true;
 
     form.parse(req, async (err, fields, files) => {
       if (err) {
@@ -62,7 +59,7 @@ export default async function handler(req, res) {
       const attachments = [];
       if (files.drawing) {
         const file = Array.isArray(files.drawing) ? files.drawing[0] : files.drawing;
-        if (file && file.filepath && fs.existsSync(file.filepath) && file.size > 0) {
+        if (file && file.filepath && fs.existsSync(file.filepath)) {
           attachments.push({
             filename: file.originalFilename || 'attachment.pdf',
             path: file.filepath,
@@ -80,35 +77,15 @@ export default async function handler(req, res) {
         attachments,
       });
 
-      // 2. 自动回复用户（内容保持与 PHP 相同）
+      // 2. 自动回复用户
       const autoReplyBody = `
         <div style='font-family: Calibri, sans-serif; font-size: 11pt; color: #333; line-height: 1.5;'>
           <p>Hi ${name},</p>
-          <p>This is an automatic confirmation that we have successfully received your inquiry and any attached drawings. Thank you for reaching out.</p>
-          <p>Our engineering team will personally review your message and get back to you within one business day. Please rest assured that all submitted files are handled with complete confidentiality.</p>
+          <p>This is an automatic confirmation that we have successfully received your inquiry. Thank you for reaching out.</p>
+          <p>Our engineering team will personally review your message and get back to you within one business day. If drawings or files are needed for the review, we will request them in our follow-up email.</p>
           <hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;'>
-          <p><strong>While you wait, explore how we solve similar challenges:</strong></p>
-          <ul style='padding-left: 0; list-style: none;'>
-            <li style='margin-bottom: 10px;'>
-              <a href='https://www.gorgeofasteners.com/blog/vibration-loosening-fix/vibration-loosening-fix.html' style='color: #007bff; text-decoration: none;'>
-                <strong>Case Study: Fixing Chronic Vibration Loosening</strong><br>
-                <span style='color: #555; font-size: 0.9em;'>How we use structural geometry, not just torque, to create joints that never back out.</span>
-              </a>
-            </li>
-            <li>
-              <a href='https://www.gorgeofasteners.com/blog/coating-induced-jam-fit/coating-induced-jam-fit.html' style='color: #007bff; text-decoration: none;'>
-                <strong>Teardown: When a 0.05mm Coating Jams Assembly</strong><br>
-                <span style='color: #555; font-size: 0.9em;'>Dissecting how an unmodeled finish layer can turn a perfect CAD fit into a production-line failure.</span>
-              </a>
-            </li>
-          </ul>
-          <br>
           <p>${signature}</p>
-          <p style='font-size: 0.85em; color: #777; margin-top: 25px;'>
-            P.S. If you need to add any information to your inquiry, simply reply to this email. For truly urgent matters, you can find our direct contact details on our website.
-          </p>
-        </div>
-      `;
+        </div>`;
 
       await transporter.sendMail({
         from: `"Catherine Zhang | Gorgeo Fasteners" <${process.env.FROM_EMAIL}>`,
