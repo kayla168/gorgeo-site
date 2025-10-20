@@ -1,27 +1,18 @@
-# 忽略API配置文件 (包含密码)
-api/config/config.php
+# 忽略所有环境配置文件
+.env
+.env.*
 
-# 也可以添加其他常见的忽略项 (可选，但推荐)
-/vendor/
-node_modules/
-.DS_Store
-Thumbs.dbRequire all denied
-.vercel
-
-
-# 忽略API配置文件 (包含密码)
-api/config/config.php
+# 如果你需要一个示例文件被追踪，可以使用下面的规则 (现在不需要)
+# !.env.example
 
 # 忽略 Vercel 和 Node.js 的本地文件
 .vercel
 node_modules/
 
-# 忽略所有环境配置文件
-.env
-.env.*
-# 如果你需要一个示例文件被追踪，可以使用下面的规则
-# !.env.example
-
 # 忽略 macOS 和 Windows 的系统文件
 .DS_Store
 Thumbs.db
+
+# 您原来就有的其他忽略规则
+api/config/config.php
+/vendor/
