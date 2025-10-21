@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/handle-download.js": {
+      "includeFiles": "drop/**"
+    },
+    "api/handle-download-blog.js": {
+      "includeFiles": "drop/**"
+    }
+  }
+}
